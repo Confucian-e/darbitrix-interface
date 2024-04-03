@@ -1,9 +1,7 @@
-import dotenv from "dotenv";
-dotenv.config({ path: "../.env" });
 
-if (!process.env.Alchemy_Mumbai_API_KEY) throw new Error("Alchemy_Mumbai_API_KEY is not set in .env");
+if (!process.env.NEXT_PUBLIC_API_KEY) throw new Error("Alchemy_Mumbai_API_KEY is not set in .env");
 
-const Alchemy_Mumbai_API_KEY = process.env.Alchemy_Mumbai_API_KEY;
+const Alchemy_Mumbai_API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const networks = {
     mumbai: {
@@ -20,7 +18,7 @@ const networks = {
     }
 }
 
-const Mumbai_RPC_HTTP = networks.mumbai.rpcUrls.public.http;
-const Mumbai_RPC_WS = networks.mumbai.rpcUrls.public.ws;
+const Mumbai_RPC_HTTP = networks.mumbai.rpcUrls.private.http;
+const Mumbai_RPC_WS = networks.mumbai.rpcUrls.private.ws;
 
 export { Mumbai_RPC_HTTP, Mumbai_RPC_WS }
