@@ -1,17 +1,20 @@
-import { encodeAbiParameters, type Hex } from "viem";
+import { encodeAbiParameters, parseEther, type Hex } from "viem";
 import { walletClient } from "../../config/client";
-import { Vault_ABI } from "./abi";
+import { Vault_ABI } from "./abi/vault";
+import { PoolId, TokenA, TokenB, Vault_Address } from "./info";
+
+const amountA = parseEther("1000000000");
+const amountB = parseEther("2000000000");
 
 async function initPool() {
-  const amountsIn = [0n, 0n];
+  const amountsIn = [amountA, amountB];
   const userData = encodeUserData(amountsIn);
   const param = {
-    poolId:
-      "0x000000269073b3b12af597028acc00668b67ad6e000000000000000000000000",
+    poolId: PoolId,
     sender: "0x000000269073b3B12AF597028aCc00668B67aD6E",
     recipient: "0x000000269073b3B12AF597028aCc00668B67aD6E",
     request: {
-      assets: ["0xA", "0xB"],
+      assets: [TokenA, TokenB],
       maxAmountsIn: amountsIn,
       userData: userData,
       fromInternalBalance: false,
@@ -19,7 +22,7 @@ async function initPool() {
   };
 
   const tx = await walletClient.writeContract({
-    address: "0xba12222222228d8ba445958a75a0704d566bf2c8",
+    address: Vault_Address,
     abi: Vault_ABI,
     functionName: "joinPool",
     args: [
