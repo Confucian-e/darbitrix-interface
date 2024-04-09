@@ -1,24 +1,24 @@
 if (!process.env.NEXT_PUBLIC_API_KEY)
-  throw new Error("Alchemy_Mumbai_API_KEY is not set in .env");
+  throw new Error("Alchemy_RPC_API_KEY is not set in .env");
 
-const Alchemy_Mumbai_API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+const Alchemy_API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const networks = {
-  mumbai: {
+  sepolia: {
     rpcUrls: {
       public: {
-        http: "https://rpc.ankr.com/polygon_mumbai",
-        ws: "wss://polygon-mumbai-bor.publicnode.com",
+        http: "https://rpc.ankr.com/polygon",
+        ws: "wss://polygon-rpc.com",
       },
       private: {
-        http: `https://polygon-mumbai.g.alchemy.com/v2/${Alchemy_Mumbai_API_KEY}`,
-        ws: `wss://polygon-mumbai.g.alchemy.com/v2/${Alchemy_Mumbai_API_KEY}`,
+        http: `https://eth-sepolia.g.alchemy.com/v2/${Alchemy_API_KEY}`,
+        ws: `wss://eth-sepolia.g.alchemy.com/v2/${Alchemy_API_KEY}`,
       },
     },
   },
 };
 
-const Mumbai_RPC_HTTP = networks.mumbai.rpcUrls.private.http;
-const Mumbai_RPC_WS = networks.mumbai.rpcUrls.private.ws;
+const Sepolia_RPC_HTTP = networks.sepolia.rpcUrls.private.http;
+const Sepolia_RPC_WS = networks.sepolia.rpcUrls.private.ws;
 
-export { Mumbai_RPC_HTTP, Mumbai_RPC_WS };
+export { Sepolia_RPC_HTTP, Sepolia_RPC_WS };

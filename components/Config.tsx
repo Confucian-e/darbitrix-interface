@@ -1,29 +1,30 @@
 "use client";
 
-import { Mumbai_RPC_WS } from "@/configs/networks";
+import { Sepolia_RPC_WS } from "@/configs/networks";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, webSocket } from "wagmi";
-import { polygonMumbai } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 
 const config = getDefaultConfig({
-  appName: "My RainbowKit App",
-  projectId: "YOUR_PROJECT_ID",
-  chains: [polygonMumbai],
+  appName: "My Graduation Dapp",
+  projectId: "DARBITRIX",
+  chains: [sepolia],
   ssr: true, // If your dApp uses server side rendering (SSR)
   transports: {
-    [polygonMumbai.id]: webSocket(Mumbai_RPC_WS),
+    [sepolia.id]: webSocket(Sepolia_RPC_WS),
   },
 });
 
-const queryClient = new QueryClient();
-
 const Config = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = new QueryClient();
+  console.log(`Sepolia Ws URL: ${Sepolia_RPC_WS}`)
+  
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider showRecentTransactions={true} coolMode>
+        <RainbowKitProvider coolMode>
           {children}
         </RainbowKitProvider>
       </QueryClientProvider>

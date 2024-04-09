@@ -1,15 +1,20 @@
 import { Address } from "viem";
 
-const Arbitrage: Address = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
+const Arbitrage: Address = "0x2bF555408BEE93d35A233e92462466ba25e4A8F6";
 
 const Factories = {
-    QuickSwap: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
-    SushiSwap: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4"
+    QuickSwap: "0x7E0987E5b3a30e3f2828572Bb659A548460a3003",
+    SushiSwap: "0x4B480914A1375C93668Aa1369d11B42a9dAdC8e9"
+}
+
+const Routers = {
+    QuickSwap: "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008",
+    SushiSwap: "0xb26b2de65d07ebb5e54c7f6282424d3be670e1f0"
 }
 
 const Tokens = {
-    Amazing: "0xEB773bc017176dbc1Bd0D77d07E196cb26E8DC4c",
-    Business: "0xEc0cF6F4c63bB47d6C7888f204703DDB859E9223"
+    Amazing: "0x4911d2fa3a40B4C2cA978dbED8Bc1dc457dBf5b8",
+    Business: "0x4f86Cc7d637F2447a17B1a1A445b2331ACF05731"
 }
 
 const QuickSwapFactory = Factories.QuickSwap as Address;
