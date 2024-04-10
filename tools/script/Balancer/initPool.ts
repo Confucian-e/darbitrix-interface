@@ -3,8 +3,8 @@ import { walletClient } from "../../config/client";
 import { Vault_ABI } from "./abi/vault";
 import { PoolId, TokenA, TokenB, Vault_Address } from "./info";
 
-const amountA = parseEther("1000000000");
-const amountB = parseEther("2000000000");
+const amountA = parseEther("100000000");
+const amountB = parseEther("200000000");
 
 async function initPool() {
   const amountsIn = [amountA, amountB];

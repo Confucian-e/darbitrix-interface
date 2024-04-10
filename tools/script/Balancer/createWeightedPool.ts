@@ -12,7 +12,7 @@ async function createWeightedPool() {
     rateProviders: [zeroAddress, zeroAddress],
     swapFeePercentage: 3000000000000000n,
     owner: "0x000000269073b3B12AF597028aCc00668B67aD6E",
-    salt: "0x4826772766356e264e4557762471314443406c2d4e602f4e75502c6e6d332701",
+    salt: "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
   };
 
   const tx = await walletClient.writeContract({

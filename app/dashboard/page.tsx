@@ -4,6 +4,7 @@ import { PairContract } from "@/classes";
 import {
   Balance,
   GenerateAccount,
+  PairPrice,
   SelectBox,
   SendGas,
   WatchBlockNumber,
@@ -95,6 +96,8 @@ export default function Page() {
           <WatchBlockNumber wallet={account.address} callback={execute} />
         </div>
       )}
+
+      {pairs && <PairPrice pairs={pairs} />}
     </div>
   );
 }

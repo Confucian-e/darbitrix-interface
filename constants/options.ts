@@ -1,12 +1,17 @@
-import { AmazingToken, BusinessToken, QuickSwapFactory, SushiSwapFactory } from "@/configs/addresses"
-import { Option } from "@/types"
+import {
+  AmazingToken,
+  BusinessToken,
+  PancakeSwapFactory,
+  SushiSwapFactory,
+} from "@/configs/addresses";
+import { Option } from "@/types";
 
 export const DexFactoryOptions: Option[] = [
-    { value: QuickSwapFactory, label: "QuickSwap" },
-    { value: SushiSwapFactory, label: "SushiSwap" }
-]
+  { value: PancakeSwapFactory, label: "PancakeSwap" },
+  { value: SushiSwapFactory, label: "SushiSwap" },
+];
 
 export const TokenOptions: Option[] = [
-    { value: AmazingToken, label: "Amazing" },
-    { value: BusinessToken, label: "Business" }
-]
+  { value: AmazingToken, label: "Amazing" },
+  { value: BusinessToken, label: "Business" },
+];
