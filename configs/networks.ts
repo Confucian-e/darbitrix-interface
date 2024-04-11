@@ -1,12 +1,12 @@
 if (!process.env.NEXT_PUBLIC_API_KEY)
   throw new Error("Alchemy_RPC_API_KEY is not set in .env");
 
-const INFURA_API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const networks = {
   arbitrum: {
-    http: `https://arbitrum-mainnet.infura.io/v3/${INFURA_API_KEY}`,
-    ws: `wss://arbitrum-mainnet.infura.io/ws/v3/${INFURA_API_KEY}`,
+    http: `https://g.w.lavanet.xyz:443/gateway/arb1/rpc-http/${API_KEY}`,
+    ws: `wss://g.w.lavanet.xyz:443/gateway/arb1/rpc/${API_KEY}`,
   },
 };
 
