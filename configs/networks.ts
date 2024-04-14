@@ -1,12 +1,12 @@
 if (!process.env.NEXT_PUBLIC_API_KEY)
-  throw new Error("Alchemy_RPC_API_KEY is not set in .env");
+  throw new Error("API_KEY is not set in environment variables");
 
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const networks = {
   arbitrum: {
-    http: `https://g.w.lavanet.xyz:443/gateway/arb1/rpc-http/${API_KEY}`,
-    ws: `wss://g.w.lavanet.xyz:443/gateway/arb1/rpc/${API_KEY}`,
+    http: `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${API_KEY}`,
+    ws: `wss://lb.drpc.org/ogws?network=arbitrum&dkey=${API_KEY}`,
   },
 };
 
