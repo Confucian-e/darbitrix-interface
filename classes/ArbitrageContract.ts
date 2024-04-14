@@ -26,17 +26,13 @@ export class ArbitrageContract extends BaseContract {
     amounts: bigint[],
     data: Hex
   ): Promise<Hash> {
-    const { request } = await client.simulateContract({
+    const txHash = await client.writeContract({
       address: this.contract,
       abi: IArbitrage,
       functionName: "makeFlashLoan",
       args: [tokens, amounts, data],
       account: this.signer,
     });
-
-    console.log("request: ", request);
-
-    const txHash = await client.writeContract(request);
     return txHash;
   }
 
