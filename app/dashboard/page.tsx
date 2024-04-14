@@ -1,20 +1,26 @@
 "use client";
 
-import { PairContract } from "@/classes";
+import { ArbitrageContract, PairContract } from "@/classes";
 import {
   Balance,
   GenerateAccount,
-  PairPrice,
   SelectBox,
   SendGas,
-  WatchBlockNumber,
+  WatchSwapEvent,
 } from "@/components";
+import { Arbitrage as Arbitrage_Address } from "@/configs/addresses";
 import { DexFactoryOptions, TokenOptions } from "@/constants/options";
+import {
+  encodeCallSwapExactFor,
+  encodeCallSwapForExact,
+  encodeMakeFlashLoanData,
+} from "@/core/Executor/encode";
 import { findPairs, getPairs } from "@/core/Searcher";
+import { SwapExactForParam, SwapForExactParam } from "@/types";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button } from "antd";
 import { useState } from "react";
-import type { Account, Address } from "viem";
+import { maxUint256, parseEther, type Account, type Address } from "viem";
 
 export default function Page() {
   const [account, setAccount] = useState<Account>();
@@ -39,9 +45,48 @@ export default function Page() {
     console.log("Pairs: ", pairs);
   };
 
-  async function execute() {
-    if (!pairs) return;
+  function execute() {
+    if (!pairs || !account) return;
     const [PairA, PairB] = pairs;
+
+    const arbitrage = new ArbitrageContract(Arbitrage_Address, account);
+
+    const swapAmount = parseEther("100");
+    const path = [PairA.token0, PairA.token1];
+    const to = arbitrage.contract;
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 10);
+
+    // encode swap for exact
+    const param1: SwapForExactParam = {
+      amountInMax: maxUint256,
+      amountOut: swapAmount,
+      path,
+      to,
+      deadline,
+    };
+
+    // encode swap exact for
+    const param2: SwapExactForParam = {
+      amountIn: swapAmount,
+      amountOutMin: 0n,
+      path,
+      to,
+      deadline,
+    };
+
+    const call1 = encodeCallSwapForExact(PairA.contract, param1);
+    const call2 = encodeCallSwapExactFor(PairB.contract, param2);
+
+    const data = encodeMakeFlashLoanData([call1, call2]);
+
+    console.log("makeFlashLoan data: ", data);
+
+    // execute arbitrage
+    // await arbitrage.makeFlashLoan(
+    //   [PairA.token0, PairA.token1],
+    //   [swapAmount, swapAmount],
+    //   data
+    // );
   }
 
   return (
@@ -93,11 +138,13 @@ export default function Page() {
 
       {account && confirmed && (
         <div>
-          <WatchBlockNumber wallet={account.address} callback={execute} />
+          <WatchSwapEvent
+            wallet={account.address}
+            pairs={pairs!}
+            callback={execute}
+          />
         </div>
       )}
-
-      {pairs && <PairPrice pairs={pairs} />}
     </div>
   );
 }

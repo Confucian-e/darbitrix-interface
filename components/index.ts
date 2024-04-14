@@ -3,15 +3,6 @@ import Config from "./Config";
 import GenerateAccount from "./GenerateAccount";
 import SelectBox from "./SelectBox";
 import SendGas from "./SendGas";
-import WatchBlockNumber from "./WatchBlockNumber";
-import PairPrice from "./PairPrice";
+import WatchSwapEvent from "./WatchSwapEvent";
 
-export {
-  Balance,
-  Config,
-  GenerateAccount,
-  SelectBox,
-  SendGas,
-  WatchBlockNumber,
-  PairPrice,
-};
+export { Balance, Config, GenerateAccount, SelectBox, SendGas, WatchSwapEvent };
