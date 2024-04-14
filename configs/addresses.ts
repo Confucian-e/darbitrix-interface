@@ -1,6 +1,6 @@
 import { Address } from "viem";
 
-const Arbitrage: Address = "0x6b17edf3201e2da11a4009c3dd2baa7e180cf29e";
+const Arbitrage: Address = "0x3450F6837ad2015A4067aa5900B3e0d36aD49bCC";
 
 const Factories = {
   PancakeSwap: "0x02a84c1b3BBD7401a5f7fa98a384EBC70bB5749E",
