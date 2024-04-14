@@ -8,7 +8,11 @@ import {
   SendGas,
   WatchSwapEvent,
 } from "@/components";
-import { Arbitrage as Arbitrage_Address } from "@/configs/addresses";
+import {
+  Arbitrage as Arbitrage_Address,
+  PancakeSwapRouter,
+  SushiSwapRouter,
+} from "@/configs/addresses";
 import { DexFactoryOptions, TokenOptions } from "@/constants/options";
 import {
   encodeCallSwapExactFor,
@@ -20,7 +24,7 @@ import { SwapExactForParam, SwapForExactParam } from "@/types";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button } from "antd";
 import { useState } from "react";
-import { maxUint256, parseEther, type Account, type Address } from "viem";
+import { Hex, maxUint256, parseEther, type Account, type Address } from "viem";
 
 export default function Page() {
   const [account, setAccount] = useState<Account>();
@@ -28,6 +32,7 @@ export default function Page() {
   const [selectedTokens, setSelectedTokens] = useState<Address[]>();
   const [pairs, setPairs] = useState<PairContract[]>();
   const [confirmed, setConfirmed] = useState<boolean>(false);
+  const [tx, setTx] = useState<Hex>();
 
   const handleConfirm = async () => {
     if (!account || !selectedDexs || !selectedTokens) return;
@@ -45,22 +50,27 @@ export default function Page() {
     console.log("Pairs: ", pairs);
   };
 
-  function execute() {
+  async function execute() {
     if (!pairs || !account) return;
     const [PairA, PairB] = pairs;
+    const [token0, token1] = [PairA.token0, PairA.token1];
+
+    console.log("Pairs: ", pairs);
 
     const arbitrage = new ArbitrageContract(Arbitrage_Address, account);
 
     const swapAmount = parseEther("100");
-    const path = [PairA.token0, PairA.token1];
+    const path1 = [token0, token1];
+    const path2 = [token1, token0];
     const to = arbitrage.contract;
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 10);
+    // const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 10);
+    const deadline = 1730000000n; // 2024-10-27
 
     // encode swap for exact
     const param1: SwapForExactParam = {
       amountInMax: maxUint256,
       amountOut: swapAmount,
-      path,
+      path: path1,
       to,
       deadline,
     };
@@ -69,24 +79,24 @@ export default function Page() {
     const param2: SwapExactForParam = {
       amountIn: swapAmount,
       amountOutMin: 0n,
-      path,
+      path: path2,
       to,
       deadline,
     };
 
-    const call1 = encodeCallSwapForExact(PairA.contract, param1);
-    const call2 = encodeCallSwapExactFor(PairB.contract, param2);
+    const call1 = encodeCallSwapForExact(SushiSwapRouter, param1);
+    const call2 = encodeCallSwapExactFor(PancakeSwapRouter, param2);
 
     const data = encodeMakeFlashLoanData([call1, call2]);
 
-    console.log("makeFlashLoan data: ", data);
-
     // execute arbitrage
-    // await arbitrage.makeFlashLoan(
-    //   [PairA.token0, PairA.token1],
-    //   [swapAmount, swapAmount],
-    //   data
-    // );
+    const tx = await arbitrage.makeFlashLoan(
+      [PairA.token0, PairA.token1],
+      [swapAmount, swapAmount],
+      data
+    );
+
+    setTx(tx);
   }
 
   return (
@@ -133,7 +143,6 @@ export default function Page() {
             confirm
           </Button>
         </div>
-        <div className="flex justify-center">{confirmed && <h3>Ready</h3>}</div>
       </div>
 
       {account && confirmed && (
@@ -143,6 +152,13 @@ export default function Page() {
             pairs={pairs!}
             callback={execute}
           />
+        </div>
+      )}
+
+      {tx && (
+        <div>
+          <h2 className="flex justify-center">Aribtrage Successfully</h2>
+          <h3 className="flex justify-center">tx hash: {tx}</h3>
         </div>
       )}
     </div>
