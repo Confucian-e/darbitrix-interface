@@ -5,8 +5,8 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const networks = {
   arbitrum: {
-    http: `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${API_KEY}`,
-    ws: `wss://lb.drpc.org/ogws?network=arbitrum&dkey=${API_KEY}`,
+    http: `https://arb-mainnet.g.alchemy.com/v2/${API_KEY}`,
+    ws: `wss://arb-mainnet.g.alchemy.com/v2/${API_KEY}`,
   },
 };
 
