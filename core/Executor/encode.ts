@@ -1,62 +1,73 @@
 import { IUniswapV2Router } from "@/abi";
-import type { SwapExactForParam, SwapForExactParam } from "@/types";
-import { encodeAbiParameters, encodeFunctionData, parseAbiParameter, type Address, type Hex } from "viem";
+import type { Call, SwapExactForParam, SwapForExactParam } from "@/types";
+import {
+  encodeAbiParameters,
+  encodeFunctionData,
+  parseAbiParameter,
+  type Address,
+  type Hex,
+} from "viem";
 
 /**
- * Encodes a call to the `swapExactTokensForTokens` function of the Uniswap V2 Router contract.
- * 
- * @param target The address of the contract to call.
- * @param param The parameters for the `swapExactTokensForTokens` function call.
+ * Encodes an array of calls into flash loan data.
+ * @param calls An array of calls to be encoded.
+ * @returns The encoded flash loan data as a hexadecimal string.
+ */
+export function encodeMakeFlashLoanData(calls: Call[]): Hex {
+  const Call = parseAbiParameter([
+    "Call[]",
+    "struct Call { address target; bytes callData; }",
+  ]);
+
+  return encodeAbiParameters([Call], [calls]);
+}
+
+/**
+ * Encodes the call to swap exact tokens for tokens.
+ * @param target The target address.
+ * @param param The swap exact for parameter.
  * @returns The encoded call data.
  */
-export function encodeCallSwapExactFor(target: Address, param: SwapExactForParam): Hex {
-    const swapData = encodeFunctionData({
-        abi: IUniswapV2Router,
-        functionName: "swapExactTokensForTokens",
-        args: [param.amountIn, param.amountOutMin, param.path, param.to, param.deadline]
-    });
+export function encodeCallSwapExactFor(
+  target: Address,
+  param: SwapExactForParam
+): Call {
+  const swapData = encodeFunctionData({
+    abi: IUniswapV2Router,
+    functionName: "swapExactTokensForTokens",
+    args: [
+      param.amountIn,
+      param.amountOutMin,
+      param.path,
+      param.to,
+      param.deadline,
+    ],
+  });
 
-    const encodedCall = encodeCallStruct(target, swapData);
-    return encodedCall;
+  return { target: target, callData: swapData };
 }
 
 /**
  * Encodes a call to swap tokens for an exact amount using the Uniswap V2 Router.
- * 
- * @param target The target address to call the function on.
+ * @param target The target address to call.
  * @param param The parameters for the swap.
- * @returns The encoded call as a hexadecimal string.
+ * @returns The encoded call data.
  */
-export function encodeCallSwapForExact(target: Address, param: SwapForExactParam): Hex {
-    const swapData = encodeFunctionData({
-        abi: IUniswapV2Router,
-        functionName: "swapTokensForExactTokens",
-        args: [param.amountOut, param.amountInMax, param.path, param.to, param.deadline]
-    });
+export function encodeCallSwapForExact(
+  target: Address,
+  param: SwapForExactParam
+): Call {
+  const swapData = encodeFunctionData({
+    abi: IUniswapV2Router,
+    functionName: "swapTokensForExactTokens",
+    args: [
+      param.amountOut,
+      param.amountInMax,
+      param.path,
+      param.to,
+      param.deadline,
+    ],
+  });
 
-    const encodedCall = encodeCallStruct(target, swapData);
-    return encodedCall;
-}
-
-/**
- * Encodes the call structure with the target address and call data.
- * 
- * @param target The target address.
- * @param callData The call data.
- * @returns The encoded call structure.
- */
-function encodeCallStruct(target: Address, callData: Hex): Hex {
-    const Call = parseAbiParameter([
-        'Call',
-        'struct Call { address target; bytes callData; }'
-    ])
-
-    const encodedCall = encodeAbiParameters(
-        [Call],
-        [{
-            target: target,
-            callData: callData
-        }]
-    );
-    return encodedCall;
+  return { target: target, callData: swapData };
 }
