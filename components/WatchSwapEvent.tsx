@@ -143,16 +143,16 @@ export default function WatchSwapEvent({
         <Switch checked={enabled} onChange={handleSwitch} />
       </div>
       <div>
-        <div>
+        <div className="flex justify-center">
           {results.isSuccess && `${results.data[1]} / ${results.data[0]}`}
         </div>
-        <div>
-          <h3>Pair1 Price</h3>
-          <div>{prices && prices[0]}</div>
+        <div className="flex justify-center">
+          <h3>Pair1 Price: </h3>
+          <div className="ml-1">{prices && prices[0]}</div>
         </div>
-        <div>
-          <h3>Pair2 Price</h3>
-          <div>{prices && prices[1]}</div>
+        <div className="flex justify-center">
+          <h3>Pair2 Price: </h3>
+          <div className="ml-1">{prices && prices[1]}</div>
         </div>
       </div>
     </>
