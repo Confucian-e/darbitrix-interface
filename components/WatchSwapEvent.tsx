@@ -32,6 +32,8 @@ export default function WatchSwapEvent({
   const pair1 = pairs[0];
   const pair2 = pairs[1];
 
+  const [token0, token1] = [pair1.token0, pair1.token1];
+
   const [enabled, setEnabled] = useState<boolean>(false);
   const [eventCount, setEventCount] = useState<number>(0);
   const [prices, setPrices] = useState<number[]>();
@@ -39,12 +41,12 @@ export default function WatchSwapEvent({
     allowFailure: false,
     contracts: [
       {
-        address: pair1.token0,
+        address: token0,
         abi: erc20Abi,
         functionName: "symbol",
       },
       {
-        address: pair1.token1,
+        address: token1,
         abi: erc20Abi,
         functionName: "symbol",
       },
@@ -53,8 +55,8 @@ export default function WatchSwapEvent({
 
   useEffect(() => {
     (async () => {
-      const price1 = await quoteRelativePrice(pair1, pair1.token0);
-      const price2 = await quoteRelativePrice(pair2, pair2.token0);
+      const price1 = await quoteRelativePrice(pair1, token0);
+      const price2 = await quoteRelativePrice(pair2, token0);
       setPrices([price1, price2]);
 
       console.log(`price1: ${price1}`);
