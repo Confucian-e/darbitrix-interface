@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Button, InputNumber, notification } from "antd";
+import { useEffect, useState } from "react";
 import { parseEther, type Address } from "viem";
 import { useSendTransaction } from "wagmi";
 
@@ -10,11 +10,13 @@ import { useSendTransaction } from "wagmi";
  * @param receiver - The address of the receiver.
  */
 export default function SendGas({ receiver }: { receiver: Address }) {
-  const [amount, setAmount] = useState<number>();
+  const defaultValue = 0.00002;
+  const [amount, setAmount] = useState<number>(defaultValue);
   const {
     data: hash,
     isPending,
-    isSuccess,
+    error,
+    status,
     sendTransaction,
   } = useSendTransaction();
 
@@ -36,29 +38,45 @@ export default function SendGas({ receiver }: { receiver: Address }) {
     });
   };
 
-  /**
-   * Opens a success notification when the transaction is successful.
-   */
-  const openNotification = () => {
-    notification.success({
-      message: "Transaction Submitted.",
-      description: `Transaction Hash: ${hash}`,
-      placement: "topLeft",
-      duration: null,
-    });
-  };
-
   useEffect(() => {
-    if (isSuccess) {
-      openNotification();
+    switch (status) {
+      case "success":
+        notification.success({
+          message: "Transaction Submitted.",
+          description: `Transaction Hash: ${hash}`,
+          placement: "topLeft",
+          duration: null,
+        });
+        break;
+
+      case "error":
+        notification.error({
+          message: "Transaction Failed.",
+          description: error?.message,
+          placement: "topLeft",
+          duration: null,
+        });
+        break;
+
+      case "pending":
+        notification.info({
+          message: "Transaction Pending.",
+          description: "Waiting for confirmation...",
+          placement: "topLeft",
+          duration: null,
+        });
+        break;
+
+      default:
+        break;
     }
-  }, [isSuccess]);
+  }, [status]);
 
   return (
     <div>
       <div className="flex justify-center">
         <div>
-          <InputNumber defaultValue={0.1} onChange={handleChange} />
+          <InputNumber defaultValue={defaultValue} onChange={handleChange} />
         </div>
         <div className="flex ml-5">
           <Button disabled={isPending} onClick={handleClick}>
