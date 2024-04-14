@@ -10,7 +10,7 @@ import { useSendTransaction } from "wagmi";
  * @param receiver - The address of the receiver.
  */
 export default function SendGas({ receiver }: { receiver: Address }) {
-  const defaultValue = 0.00002;
+  const defaultValue = 0.000005;
   const [amount, setAmount] = useState<number>(defaultValue);
   const {
     data: hash,
