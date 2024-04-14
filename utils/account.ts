@@ -1,7 +1,7 @@
 import {
-    generatePrivateKey,
-    privateKeyToAccount,
-    type Account,
+  generatePrivateKey,
+  privateKeyToAccount,
+  type Account,
 } from "viem/accounts";
 
 /**
@@ -9,7 +9,8 @@ import {
  * @returns The generated account.
  */
 export function generateAccount(): Account {
-    const privateKey = generatePrivateKey();
-    const account = privateKeyToAccount(privateKey);
-    return account;
+  const privateKey = generatePrivateKey();
+  console.log("privateKey:", privateKey);
+  const account = privateKeyToAccount(privateKey);
+  return account;
 }
