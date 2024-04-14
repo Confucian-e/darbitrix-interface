@@ -27,7 +27,7 @@ export default function WatchSwapEvent({
 }: {
   wallet: Address;
   pairs: PairContract[];
-  callback: () => void;
+  callback: () => Promise<void>;
 }) {
   const pair1 = pairs[0];
   const pair2 = pairs[1];
@@ -74,7 +74,11 @@ export default function WatchSwapEvent({
     onLogs: (logs) => {
       console.log("Swap Event: ", logs);
       setEventCount((count) => count + 1);
-      callback();
+      callback()
+        .then(() => console.log("success"))
+        .catch((err) => {
+          console.error(err);
+        });
     },
     enabled: enabled,
   });
@@ -86,7 +90,11 @@ export default function WatchSwapEvent({
     onLogs: (logs) => {
       console.log("Swap Event: ", logs);
       setEventCount((count) => count + 1);
-      callback();
+      callback()
+        .then(() => console.log("success"))
+        .catch((err) => {
+          console.error(err);
+        });
     },
     enabled: enabled,
   });
