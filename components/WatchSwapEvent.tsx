@@ -65,22 +65,29 @@ export default function WatchSwapEvent({
   const { signTypedData } = useSignTypedData();
   const chainId = useChainId();
 
-  const watchContractEvent = (pair: PairContract) => {
-    useWatchContractEvent({
-      address: pair.contract,
-      abi: IUniswapV2Pair,
-      eventName: "Swap",
-      onLogs: (logs) => {
-        console.log("Swap Event: ", logs);
-        setEventCount((count) => count + 1);
-        callback();
-      },
-      enabled: enabled,
-    });
-  };
+  useWatchContractEvent({
+    address: pair1.contract,
+    abi: IUniswapV2Pair,
+    eventName: "Swap",
+    onLogs: (logs) => {
+      console.log("Swap Event: ", logs);
+      setEventCount((count) => count + 1);
+      callback();
+    },
+    enabled: enabled,
+  });
 
-  watchContractEvent(pair1);
-  watchContractEvent(pair2);
+  useWatchContractEvent({
+    address: pair2.contract,
+    abi: IUniswapV2Pair,
+    eventName: "Swap",
+    onLogs: (logs) => {
+      console.log("Swap Event: ", logs);
+      setEventCount((count) => count + 1);
+      callback();
+    },
+    enabled: enabled,
+  });
 
   const types = {
     Message: [
