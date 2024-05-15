@@ -1,7 +1,6 @@
-if (!process.env.NEXT_PUBLIC_API_KEY)
-  throw new Error("API_KEY is not set in environment variables");
-
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+if (!API_KEY)
+  throw new Error("Alchemy RPC API KEY is not set in environment variables");
 
 const networks = {
   arbitrum: {
