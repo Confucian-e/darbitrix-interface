@@ -1,7 +1,8 @@
 import { IUniswapV2Factory } from "@/abi";
 import { PairContract } from "@/classes";
-import { client } from "@/configs/client";
+import { config } from "@/configs";
 import type { Abi, Account, Address } from "viem";
+import { multicall } from "wagmi/actions";
 
 /**
  * Retrieves pairs of tokens from multiple factories using the Uniswap V2 protocol.
@@ -11,24 +12,24 @@ import type { Abi, Account, Address } from "viem";
  * @returns An array of pairs of tokens.
  */
 export async function findPairs(
-    factories: Address[],
-    tokenA: Address,
-    tokenB: Address
+  factories: Address[],
+  tokenA: Address,
+  tokenB: Address
 ): Promise<Address[]> {
-    const contracts = factories.map((factory) => ({
-        address: factory,
-        abi: IUniswapV2Factory as Abi,
-        functionName: "getPair",
-        args: [tokenA, tokenB],
-    }));
+  const contracts = factories.map((factory) => ({
+    address: factory,
+    abi: IUniswapV2Factory as Abi,
+    functionName: "getPair",
+    args: [tokenA, tokenB],
+  }));
 
-    const pairs = (
-        await client.multicall({
-            contracts,
-        })
-    ).map((v) => v.result);
+  const pairs = (
+    await multicall(config, {
+      contracts,
+    })
+  ).map((v) => v.result);
 
-    return pairs as Address[];
+  return pairs as Address[];
 }
 
 /**
@@ -40,31 +41,17 @@ export async function findPairs(
  * @throws Error if the length of pairs is not equal to 2 or the length of tokens is not equal to 2.
  */
 export async function getPairs(
-    account: Account,
-    pairs: Address[],
-    tokens: Address[]
+  account: Account,
+  pairs: Address[],
+  tokens: Address[]
 ): Promise<PairContract[]> {
-    if (pairs.length !== 2) throw new Error("Invalid Length of pairs");
-    if (tokens.length !== 2) throw new Error("Invalid Length of tokens");
+  if (pairs.length !== 2) throw new Error("Invalid Length of pairs");
+  if (tokens.length !== 2) throw new Error("Invalid Length of tokens");
 
-    const [token0, token1] = sortTokens(tokens[0], tokens[1]);
+  const [tokenA, tokenB] = tokens;
 
-    const PairA = new PairContract(pairs[0], account, token0, token1);
-    const PairB = new PairContract(pairs[1], account, token0, token1);
+  const PairA = new PairContract(pairs[0], account, tokenA, tokenB);
+  const PairB = new PairContract(pairs[1], account, tokenA, tokenB);
 
-    return [PairA, PairB];
-}
-
-/**
- * Sorts two tokens in ascending order.
- *
- * @param tokenA - The first token.
- * @param tokenB - The second token.
- * @returns An array containing the sorted tokens.
- */
-function sortTokens(tokenA: Address, tokenB: Address): [Address, Address] {
-    if (tokenA > tokenB) {
-        return [tokenB, tokenA];
-    }
-    return [tokenA, tokenB];
+  return [PairA, PairB];
 }

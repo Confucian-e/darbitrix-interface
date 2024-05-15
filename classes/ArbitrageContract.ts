@@ -1,6 +1,7 @@
 import { IArbitrage } from "@/abi";
-import { client } from "@/configs/client";
+import { config } from "@/configs";
 import type { Account, Address, Hash, Hex } from "viem";
+import { simulateContract, writeContract } from "wagmi/actions";
 import { BaseContract } from "./BaseContract";
 
 export class ArbitrageContract extends BaseContract {
@@ -26,14 +27,13 @@ export class ArbitrageContract extends BaseContract {
     amounts: bigint[],
     data: Hex
   ): Promise<Hash> {
-    const txHash = await client.writeContract({
+    return await writeContract(config, {
       address: this.contract,
       abi: IArbitrage,
       functionName: "makeFlashLoan",
       args: [tokens, amounts, data],
       account: this.signer,
     });
-    return txHash;
   }
 
   /**
@@ -42,7 +42,7 @@ export class ArbitrageContract extends BaseContract {
    * @returns A promise that resolves to the transaction hash of the withdrawal.
    */
   async withdraw(tokens: Address[]): Promise<Hash> {
-    const { request } = await client.simulateContract({
+    const { request } = await simulateContract(config, {
       address: this.contract,
       abi: IArbitrage,
       functionName: "withdraw",
@@ -50,8 +50,7 @@ export class ArbitrageContract extends BaseContract {
       account: this.signer,
     });
 
-    const txHash = await client.writeContract(request);
-    return txHash;
+    return await writeContract(config, request);
   }
 
   /**
@@ -61,7 +60,7 @@ export class ArbitrageContract extends BaseContract {
    * @returns A promise that resolves to the transaction hash of the executed delegate call.
    */
   async delegateCall(target: Address, data: Hex): Promise<Hash> {
-    const { request } = await client.simulateContract({
+    const { request } = await simulateContract(config, {
       address: this.contract,
       abi: IArbitrage,
       functionName: "delegateCall",
@@ -69,7 +68,6 @@ export class ArbitrageContract extends BaseContract {
       account: this.signer,
     });
 
-    const txHash = await client.writeContract(request);
-    return txHash;
+    return await writeContract(config, request);
   }
 }

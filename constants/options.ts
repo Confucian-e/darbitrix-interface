@@ -3,7 +3,7 @@ import {
   BusinessToken,
   PancakeSwapFactory,
   SushiSwapFactory,
-} from "@/configs/addresses";
+} from "@/constants/addressBook";
 import { Option } from "@/types";
 
 export const DexFactoryOptions: Option[] = [

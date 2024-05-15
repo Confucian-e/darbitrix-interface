@@ -1,2 +1,2 @@
-export * from "./ArbitrageContract"
-export * from "./PairContract"
+export { ArbitrageContract } from "./ArbitrageContract";
+export { PairContract } from "./PairContract";

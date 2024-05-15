@@ -2,7 +2,7 @@
 
 import { IUniswapV2Pair } from "@/abi";
 import { PairContract } from "@/classes";
-import { Arbitrage } from "@/configs/addresses";
+import { Arbitrage } from "@/constants";
 import { quoteRelativePrice } from "@/core/Strategy";
 import { Switch } from "antd";
 import { useEffect, useState } from "react";

@@ -12,7 +12,7 @@ import {
   Arbitrage as Arbitrage_Address,
   PancakeSwapRouter,
   SushiSwapRouter,
-} from "@/configs/addresses";
+} from "@/constants/addressBook";
 import { DexFactoryOptions, TokenOptions } from "@/constants/options";
 import {
   encodeCallSwapExactFor,
