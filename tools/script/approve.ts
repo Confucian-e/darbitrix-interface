@@ -3,7 +3,7 @@ import {
   Arbitrage,
   PancakeSwapRouter,
   SushiSwapRouter,
-} from "../../configs/addresses";
+} from "../../constants/addressBook";
 import { walletClient } from "../config/client";
 
 async function approve() {

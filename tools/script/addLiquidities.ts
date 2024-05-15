@@ -1,13 +1,12 @@
+import { parseUnits } from "viem";
 import { IUniswapV2Router } from "../../abi";
-import { walletClient } from "../config/client";
-
 import {
   AmazingToken,
   BusinessToken,
   PancakeSwapRouter,
   SushiSwapRouter,
-} from "../../configs/addresses";
-import { parseUnits } from "viem";
+} from "../../constants/addressBook";
+import { walletClient } from "../config/client";
 
 async function addLiquidities() {
   const receiver = "0x000000269073b3B12AF597028aCc00668B67aD6E";

@@ -3,7 +3,7 @@ import {
   AmazingToken,
   BusinessToken,
   PancakeSwapRouter,
-} from "../../configs/addresses";
+} from "../../constants/addressBook";
 import { type SwapExactForParam } from "../../types";
 import { walletClient } from "../config/client";
 

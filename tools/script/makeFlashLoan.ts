@@ -1,5 +1,5 @@
 import { IArbitrage } from "../../abi";
-import { Arbitrage } from "../../configs/addresses";
+import { Arbitrage } from "../../constants/addressBook";
 import { walletClient } from "../config/client";
 
 async function makeFlashLoan() {
