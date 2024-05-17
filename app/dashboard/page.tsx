@@ -1,5 +1,6 @@
 "use client";
 
+import "./style.css";
 import { ArbitrageContract, PairContract } from "@/classes";
 import {
   Balance,
@@ -7,6 +8,7 @@ import {
   SelectBox,
   SendGas,
   WatchSwapEvent,
+  ShowEvent,
 } from "@/components";
 import {
   Arbitrage as Arbitrage_Address,
@@ -22,9 +24,11 @@ import {
 import { findPairs, getPairs } from "@/core/Searcher";
 import { SwapExactForParam, SwapForExactParam } from "@/types";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Button } from "antd";
+import { Button, Card, Space } from "antd";
 import { useState } from "react";
 import { Hex, maxUint256, parseEther, type Account, type Address } from "viem";
+
+const baseUrl = "https://app.blocksec.com/explorer/tx/arbitrum/";
 
 export default function Page() {
   const [account, setAccount] = useState<Account>();
@@ -100,67 +104,92 @@ export default function Page() {
   }
 
   return (
-    <div>
+    <>
       <div className="flex justify-end mt-4 mr-4">
         <ConnectButton chainStatus="icon" />
       </div>
-      <h2 className="flex justify-center">Welcome to Dashborad</h2>
 
-      <div>
-        {!account && (
-          <div className="flex justify-center">
-            <GenerateAccount setAccount={setAccount} />
-          </div>
-        )}
-        {account && (
-          <>
-            <h4 className="flex justify-center">
-              Send Gas to Account Address: {account.address}
-            </h4>
+      <Space
+        align="center"
+        className="flex justify-center"
+        direction="horizontal"
+        size={28}
+      >
+        <Card title="Account Management">
+          {!account && (
             <div className="flex justify-center">
-              <Balance account={account.address} />
+              <GenerateAccount setAccount={setAccount} />
             </div>
-            <SendGas receiver={account.address} />
-          </>
-        )}
-      </div>
+          )}
+          {account && (
+            <>
+              <h4 className="flex justify-center">
+                Send Gas to Account Address:
+              </h4>
+              <h4>{account.address}</h4>
+              <div className="flex justify-center">
+                <Balance account={account.address} />
+              </div>
+              <div className="flex justify-center">
+                <SendGas receiver={account.address} />
+                <Button
+                  className="ml-2"
+                  onClick={handleConfirm}
+                  disabled={confirmed}
+                >
+                  confirm
+                </Button>
+              </div>
+            </>
+          )}
+        </Card>
 
-      <div>
-        <div className="flex justify-center">
-          <h4>Choose DEXs</h4>
+        <Card title="Select DEXs">
           <SelectBox
             options={DexFactoryOptions}
             setSelected={setSelectedDexs}
           />
-        </div>
-        <div className="flex justify-center">
-          <h4>Choose Tokens</h4>
+        </Card>
+
+        <Card title="Select Tokens">
           <SelectBox options={TokenOptions} setSelected={setSelectedTokens} />
-        </div>
+        </Card>
+      </Space>
 
-        <div className="flex justify-center">
-          <Button onClick={handleConfirm} disabled={confirmed}>
-            confirm
-          </Button>
-        </div>
-      </div>
+      <Space
+        align="center"
+        className="flex mt-10 justify-center"
+        direction="horizontal"
+      >
+        {account && confirmed && (
+          <Card>
+            <WatchSwapEvent
+              wallet={account.address}
+              pairs={pairs!}
+              callback={execute}
+            />
+          </Card>
+        )}
 
-      {account && confirmed && (
-        <div>
-          <WatchSwapEvent
-            wallet={account.address}
-            pairs={pairs!}
-            callback={execute}
-          />
-        </div>
-      )}
+        {account && confirmed && (
+          <Card
+            className="ml-8"
+            style={{
+              backgroundColor: "#f0f0f0", // 设置背景颜色为浅灰色
+            }}
+          >
+            <Card title="Events Catched">
+              <ShowEvent pairs={pairs!} />
+            </Card>
 
-      {tx && (
-        <div>
-          <h2 className="flex justify-center">Aribtrage Successfully</h2>
-          <h3 className="flex justify-center">tx hash: {tx}</h3>
-        </div>
-      )}
-    </div>
+            <Card className="mt-8" title="Aribtrage Transaction Hash">
+              <a target="_blank" href={baseUrl + tx}>
+                {tx}
+              </a>
+            </Card>
+          </Card>
+        )}
+      </Space>
+    </>
   );
 }
