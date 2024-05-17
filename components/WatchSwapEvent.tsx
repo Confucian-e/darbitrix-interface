@@ -4,7 +4,7 @@ import { IUniswapV2Pair } from "@/abi";
 import { PairContract } from "@/classes";
 import { Arbitrage } from "@/constants";
 import { quoteRelativePrice } from "@/core/Strategy";
-import { Switch } from "antd";
+import { Switch, Space, Card } from "antd";
 import { useEffect, useState } from "react";
 import { erc20Abi, type Address, type TypedData } from "viem";
 import {
@@ -138,23 +138,24 @@ export default function WatchSwapEvent({
 
   return (
     <>
-      <div className="flex justify-center">
-        <h3 className="mr-3">Switch to Enable/Disable</h3>
+      <Space align="center" direction="vertical">
+        <h3 className="">Switch to {enabled ? "Disable" : "Enable"}</h3>
         <Switch checked={enabled} onChange={handleSwitch} />
-      </div>
-      <div>
-        <div className="flex justify-center">
-          {results.isSuccess && `${results.data[1]} / ${results.data[0]}`}
-        </div>
-        <div className="flex justify-center">
-          <h3>Pair1 Price: </h3>
-          <div className="ml-1">{prices && prices[0]}</div>
-        </div>
-        <div className="flex justify-center">
-          <h3>Pair2 Price: </h3>
-          <div className="ml-1">{prices && prices[1]}</div>
-        </div>
-      </div>
+
+        <Card title="Pair Price">
+          <div className="flex justify-center">
+            {results.isSuccess && `${results.data[1]} / ${results.data[0]}`}
+          </div>
+          <div className="flex justify-center">
+            <h3>Pair1 Price: </h3>
+            <div className="ml-1">{prices && prices[0]}</div>
+          </div>
+          <div className="flex justify-center">
+            <h3>Pair2 Price: </h3>
+            <div className="ml-1">{prices && prices[1]}</div>
+          </div>
+        </Card>
+      </Space>
     </>
   );
 }

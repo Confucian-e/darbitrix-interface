@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, InputNumber, notification } from "antd";
+import { Button, InputNumber, notification, Space } from "antd";
 import { useEffect, useState } from "react";
 import { parseEther, type Address } from "viem";
 import { useSendTransaction } from "wagmi";
@@ -73,17 +73,13 @@ export default function SendGas({ receiver }: { receiver: Address }) {
   }, [status]);
 
   return (
-    <div>
-      <div className="flex justify-center">
-        <div>
-          <InputNumber defaultValue={defaultValue} onChange={handleChange} />
-        </div>
-        <div className="flex ml-5">
-          <Button disabled={isPending} onClick={handleClick}>
-            Send
-          </Button>
-        </div>
-      </div>
-    </div>
+    <>
+      <Space>
+        <InputNumber defaultValue={defaultValue} onChange={handleChange} />
+        <Button disabled={isPending} onClick={handleClick}>
+          Send
+        </Button>
+      </Space>
+    </>
   );
 }
