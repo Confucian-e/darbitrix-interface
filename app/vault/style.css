@@ -1,0 +1,10 @@
+body {
+  background-image: url("/web3.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 700; /* 设置字体粗细为 700 (bold) */
+}
