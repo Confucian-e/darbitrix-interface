@@ -5,6 +5,8 @@ import SelectBox from "./SelectBox";
 import SendGas from "./SendGas";
 import WatchSwapEvent from "./WatchSwapEvent";
 import ShowEvent from "./ShowEvent";
+import VaultTable from "./VaultTable";
+import TokenBalance from "./TokenBalance";
 
 export {
   Balance,
@@ -14,4 +16,6 @@ export {
   SendGas,
   WatchSwapEvent,
   ShowEvent,
+  VaultTable,
+  TokenBalance,
 };
