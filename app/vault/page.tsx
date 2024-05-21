@@ -1,11 +1,35 @@
 "use client";
 
-import { VaultTable } from "@/components";
-import { Card, Space } from "antd";
+import { TokenBalance, VaultTable } from "@/components";
+import { Vault } from "@/constants";
+import { Button, Card, Input, Modal, Space } from "antd";
 import Image from "next/image";
+import { useState } from "react";
+import { Address, isAddress } from "viem";
 import "./style.css";
 
 export default function Page() {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [token, setToken] = useState<Address>();
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isAddress(e.target.value)) {
+      setToken(e.target.value);
+    }
+  };
+
   return (
     <>
       <div className="flex justify-center mt-20">
@@ -20,12 +44,20 @@ export default function Page() {
               ></Image>
               <h1 className="ml-2">Balancer Vault Holdings</h1>
             </div>
-            <a href="https://arbiscan.io/address/0xBA12222222228d8Ba445958a75a0704d566BF2C8">
-              0xBA12222222228d8Ba445958a75a0704d566BF2C8
-            </a>
+            <a href={`https://arbiscan.io/address/${Vault}`}>{Vault}</a>
 
-            {/* Input Token Address */}
-
+            <Space>
+              <Input placeholder="Token Address" onChange={handleChange} />
+              <Button onClick={showModal}>Check Balance</Button>
+              <Modal
+                title="token balance"
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+              >
+                {token && <TokenBalance token={token} account={Vault} />}
+              </Modal>
+            </Space>
             <VaultTable />
           </Space>
         </Card>
