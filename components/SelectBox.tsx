@@ -12,9 +12,11 @@ import { Address } from "viem";
 export default function SelectBox({
   options,
   setSelected,
+  placeHolder,
 }: {
   options: Option[];
   setSelected: React.Dispatch<React.SetStateAction<Address[] | undefined>>;
+  placeHolder: string;
 }) {
   /**
    * Handles the change event of the select box.
@@ -26,8 +28,12 @@ export default function SelectBox({
   };
 
   return (
-    <div className="flex justify-center">
-      <Select mode="multiple" onChange={handleChange} options={options} />
-    </div>
+    <Select
+      mode="multiple"
+      className="w-40"
+      placeholder={placeHolder}
+      onChange={handleChange}
+      options={options}
+    />
   );
 }

@@ -7,6 +7,9 @@ import WatchSwapEvent from "./WatchSwapEvent";
 import ShowEvent from "./ShowEvent";
 import VaultTable from "./VaultTable";
 import TokenBalance from "./TokenBalance";
+import SignTypeData from "./SignTypeData";
+import PairPrice from "./PairPrice";
+import WatchEvent from "./WatchEvent";
 
 export {
   Balance,
@@ -18,4 +21,7 @@ export {
   ShowEvent,
   VaultTable,
   TokenBalance,
+  SignTypeData,
+  PairPrice,
+  WatchEvent,
 };

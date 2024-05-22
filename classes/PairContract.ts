@@ -39,4 +39,18 @@ export class PairContract extends BaseContract {
     const reserves = data as [bigint, bigint];
     return reserves;
   }
+
+  /**
+   * Retrieves the factory address associated with the contract.
+   * @returns A promise that resolves to the factory address.
+   */
+  async getFactory(): Promise<Address> {
+    const data = await readContract(config, {
+      address: this.contract,
+      abi: IUniswapV2Pair,
+      functionName: "factory",
+    });
+
+    return data as Address;
+  }
 }

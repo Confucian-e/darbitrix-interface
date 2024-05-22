@@ -2,6 +2,7 @@
 
 import { IUniswapV2Pair } from "@/abi";
 import { PairContract } from "@/classes";
+import { Empty } from "antd";
 import { useState } from "react";
 import { Hash, Log } from "viem";
 import { useWatchContractEvent } from "wagmi";
@@ -20,44 +21,39 @@ function parseLogs(logs: Log[]) {
   });
 }
 
-export default function ShowEvent({ pairs }: { pairs: PairContract[] }) {
+export default function ShowEvent({
+  pair,
+  enabled,
+}: {
+  pair: PairContract;
+  enabled: boolean;
+}) {
   const [events, setEvents] = useState<LogInfo[]>();
 
-  const pair1 = pairs[0];
-  const pair2 = pairs[1];
-
   useWatchContractEvent({
-    address: pair1.contract,
+    address: pair.contract,
     abi: IUniswapV2Pair,
     eventName: "Swap",
     onLogs: (logs) => {
       const results = parseLogs(logs);
       setEvents(results);
     },
-    enabled: true,
-  });
-
-  useWatchContractEvent({
-    address: pair2.contract,
-    abi: IUniswapV2Pair,
-    eventName: "Swap",
-    onLogs: (logs) => {
-      const results = parseLogs(logs);
-      setEvents(results);
-    },
-    enabled: true,
+    enabled,
   });
 
   return (
     <>
-      {events &&
+      {events ? (
         events.map((logInfo, index) => (
           <div key={index}>
             <div>Transaction Hash: </div>
             <div>{logInfo.transactionHash}</div>
             <div>Event Name: {logInfo.eventName}</div>
           </div>
-        ))}
+        ))
+      ) : (
+        <Empty />
+      )}
     </>
   );
 }

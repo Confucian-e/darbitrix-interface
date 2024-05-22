@@ -10,3 +10,5 @@ export {
 } from "./addressBook";
 
 export { DexFactoryOptions, TokenOptions } from "./options";
+
+export { phalconUrl } from "./link";

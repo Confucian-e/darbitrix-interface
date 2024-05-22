@@ -2,39 +2,33 @@
 
 import { IUniswapV2Pair } from "@/abi";
 import { PairContract } from "@/classes";
-import { Arbitrage } from "@/constants";
 import { quoteRelativePrice } from "@/core/Strategy";
-import { Switch, Space, Card } from "antd";
 import { useEffect, useState } from "react";
-import { erc20Abi, type Address, type TypedData } from "viem";
-import {
-  useChainId,
-  useReadContracts,
-  useSignTypedData,
-  useWatchContractEvent,
-} from "wagmi";
+import { erc20Abi } from "viem";
+import { useReadContracts, useWatchContractEvent } from "wagmi";
 
 /**
- * A component for subscribing to a wallet with a callback function.
- * @param wallet - The wallet address.
- * @param callback - The callback function to be called when a block number is received.
- * @returns A React component.
+ * WatchSwapEvent component.
+ *
+ * @param pairs - An array of PairContract objects.
+ * @param callback - A function that returns a Promise.
+ * @param enabled - A boolean indicating whether the component is enabled.
+ * @returns JSX.Element
  */
 export default function WatchSwapEvent({
-  wallet,
   pairs,
   callback,
+  enabled,
 }: {
-  wallet: Address;
   pairs: PairContract[];
   callback: () => Promise<void>;
+  enabled: boolean;
 }) {
   const pair1 = pairs[0];
   const pair2 = pairs[1];
 
   const [token0, token1] = [pair1.token0, pair1.token1];
 
-  const [enabled, setEnabled] = useState<boolean>(false);
   const [eventCount, setEventCount] = useState<number>(0);
   const [prices, setPrices] = useState<number[]>();
   const results = useReadContracts({
@@ -58,14 +52,8 @@ export default function WatchSwapEvent({
       const price1 = await quoteRelativePrice(pair1, token0);
       const price2 = await quoteRelativePrice(pair2, token0);
       setPrices([price1, price2]);
-
-      console.log(`price1: ${price1}`);
-      console.log(`price2: ${price2}`);
     })();
   }, [eventCount]);
-
-  const { signTypedData } = useSignTypedData();
-  const chainId = useChainId();
 
   useWatchContractEvent({
     address: pair1.contract,
@@ -99,63 +87,19 @@ export default function WatchSwapEvent({
     enabled: enabled,
   });
 
-  const types = {
-    Message: [
-      { name: "wallet", type: "address" },
-      { name: "project", type: "string" },
-      { name: "action", type: "string" },
-      { name: "contents", type: "string" },
-    ],
-  } as const satisfies TypedData;
-
-  /**
-   * Handles the switch toggle event.
-   * @param checked - The boolean value indicating whether the switch is checked or not.
-   */
-  const handleSwitch = (checked: boolean) => {
-    signTypedData(
-      {
-        domain: {
-          chainId: chainId,
-          name: "Darbitrix",
-          version: "1.0",
-          verifyingContract: Arbitrage,
-        },
-        types,
-        primaryType: "Message",
-        message: {
-          wallet: wallet,
-          project: "Darbitrix",
-          action: enabled ? "Stop" : "Start",
-          contents: "I have agreed to the terms and conditions.",
-        },
-      },
-      {
-        onSuccess: () => setEnabled(checked),
-      }
-    );
-  };
-
   return (
     <>
-      <Space align="center" direction="vertical">
-        <h3 className="">Switch to {enabled ? "Disable" : "Enable"}</h3>
-        <Switch checked={enabled} onChange={handleSwitch} />
-
-        <Card title="Pair Price">
-          <div className="flex justify-center">
-            {results.isSuccess && `${results.data[1]} / ${results.data[0]}`}
-          </div>
-          <div className="flex justify-center">
-            <h3>Pair1 Price: </h3>
-            <div className="ml-1">{prices && prices[0]}</div>
-          </div>
-          <div className="flex justify-center">
-            <h3>Pair2 Price: </h3>
-            <div className="ml-1">{prices && prices[1]}</div>
-          </div>
-        </Card>
-      </Space>
+      <div className="flex justify-center">
+        {results.isSuccess && `${results.data[1]} / ${results.data[0]}`}
+      </div>
+      <div className="flex justify-center">
+        <h3>Pair1: </h3>
+        <div className="ml-1">{prices && prices[0]}</div>
+      </div>
+      <div className="flex justify-center">
+        <h3>Pair2: </h3>
+        <div className="ml-1">{prices && prices[1]}</div>
+      </div>
     </>
   );
 }

@@ -1,15 +1,16 @@
 "use client";
 
-import "./style.css";
 import { ArbitrageContract, PairContract } from "@/classes";
 import {
   Balance,
   GenerateAccount,
+  PairPrice,
   SelectBox,
   SendGas,
-  WatchSwapEvent,
-  ShowEvent,
+  SignTypeData,
+  WatchEvent,
 } from "@/components";
+import { phalconUrl } from "@/constants";
 import {
   Arbitrage as Arbitrage_Address,
   PancakeSwapRouter,
@@ -23,12 +24,22 @@ import {
 } from "@/core/Executor/encode";
 import { findPairs, getPairs } from "@/core/Searcher";
 import { SwapExactForParam, SwapForExactParam } from "@/types";
+import {
+  BranchesOutlined,
+  LoadingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Button, Card, Space } from "antd";
-import { useState } from "react";
-import { Hex, maxUint256, parseEther, type Account, type Address } from "viem";
-
-const baseUrl = "https://app.blocksec.com/explorer/tx/arbitrum/";
+import { Button, Card, Empty, Space, Steps, Tabs, TabsProps } from "antd";
+import { useEffect, useState } from "react";
+import {
+  maxUint256,
+  parseEther,
+  type Account,
+  type Address,
+  type Hex,
+} from "viem";
+import "./style.css";
 
 export default function Page() {
   const [account, setAccount] = useState<Account>();
@@ -36,7 +47,12 @@ export default function Page() {
   const [selectedTokens, setSelectedTokens] = useState<Address[]>();
   const [pairs, setPairs] = useState<PairContract[]>();
   const [confirmed, setConfirmed] = useState<boolean>(false);
-  const [tx, setTx] = useState<Hex>();
+  const [transaction, setTransaction] = useState<Hex>();
+  const [currentStep, setCurrentStep] = useState<number>(-1);
+  const [enabled, setEnabled] = useState<boolean>(false);
+
+  const [pair1Count, setPair1Count] = useState<number>(0);
+  const [pair2Count, setPair2Count] = useState<number>(0);
 
   const handleConfirm = async () => {
     if (!account || !selectedDexs || !selectedTokens) return;
@@ -100,22 +116,15 @@ export default function Page() {
       data
     );
 
-    setTx(tx);
+    setTransaction(tx);
   }
 
-  return (
-    <>
-      <div className="flex justify-end mt-4 mr-4">
-        <ConnectButton chainStatus="icon" />
-      </div>
-
-      <Space
-        align="center"
-        className="flex justify-center"
-        direction="horizontal"
-        size={28}
-      >
-        <Card title="Account Management">
+  const items: TabsProps["items"] = [
+    {
+      key: "1",
+      label: "Account Management",
+      children: (
+        <Card>
           {!account && (
             <div className="flex justify-center">
               <GenerateAccount setAccount={setAccount} />
@@ -126,69 +135,159 @@ export default function Page() {
               <h4 className="flex justify-center">
                 Send Gas to Account Address:
               </h4>
-              <h4>{account.address}</h4>
+              <h4 className="flex justify-center">{account.address}</h4>
               <div className="flex justify-center">
                 <Balance account={account.address} />
               </div>
               <div className="flex justify-center">
                 <SendGas receiver={account.address} />
-                <Button
-                  className="ml-2"
-                  onClick={handleConfirm}
-                  disabled={confirmed}
-                >
-                  confirm
-                </Button>
               </div>
             </>
           )}
         </Card>
-
-        <Card title="Select DEXs">
-          <SelectBox
-            options={DexFactoryOptions}
-            setSelected={setSelectedDexs}
-          />
+      ),
+    },
+    {
+      key: "2",
+      label: "Select",
+      children: (
+        <Card>
+          <Space
+            align="center"
+            direction="vertical"
+            className="flex justify-center"
+          >
+            <Space align="center" size={28}>
+              <SelectBox
+                options={DexFactoryOptions}
+                setSelected={setSelectedDexs}
+                placeHolder="Select DEXs"
+              />
+              <SelectBox
+                options={TokenOptions}
+                setSelected={setSelectedTokens}
+                placeHolder="Select Tokens"
+              />
+            </Space>
+            <Button
+              className="mt-8"
+              onClick={handleConfirm}
+              disabled={confirmed}
+            >
+              confirm
+            </Button>
+          </Space>
         </Card>
-
-        <Card title="Select Tokens">
-          <SelectBox options={TokenOptions} setSelected={setSelectedTokens} />
+      ),
+      disabled: account ? false : true,
+    },
+    {
+      key: "3",
+      label: "Pairs Price",
+      children: (
+        <Card className="flex justify-center bg-sky-300">
+          {pairs && (
+            <Space align="center" direction="vertical">
+              <PairPrice pair={pairs[0]} count={pair1Count} />
+              <PairPrice pair={pairs[1]} count={pair2Count} />
+            </Space>
+          )}
         </Card>
-      </Space>
+      ),
+      disabled: confirmed && account ? false : true,
+    },
+    {
+      key: "4",
+      label: "Events Catched",
+      children: (
+        <Card className="flex justify-center bg-sky-300">
+          {pairs && (
+            <Space align="center" direction="vertical">
+              <Card>
+                <Space align="center" direction="vertical">
+                  <h2>Sign Typed Data to Switch</h2>
+                  <SignTypeData enabled={enabled} setEnabled={setEnabled} />
+                </Space>
+              </Card>
+
+              <WatchEvent
+                pair={pairs[0]}
+                enabled={enabled}
+                setCount={setPair1Count}
+                callback={execute}
+              />
+              <WatchEvent
+                pair={pairs[1]}
+                enabled={enabled}
+                setCount={setPair2Count}
+                callback={execute}
+              />
+            </Space>
+          )}
+        </Card>
+      ),
+      disabled: confirmed ? false : true,
+    },
+    {
+      key: "5",
+      label: "Aribtrage Transaction",
+      children: (
+        <Card>
+          {!transaction && <Empty />}
+          <a
+            className="flex justify-center"
+            target="_blank"
+            href={phalconUrl + transaction}
+          >
+            {transaction}
+          </a>
+        </Card>
+      ),
+    },
+  ];
+
+  useEffect(() => {
+    if (account) setCurrentStep(0);
+    if (confirmed) setCurrentStep(1);
+    if (enabled) setCurrentStep(2);
+  }, [account, confirmed, enabled]);
+
+  return (
+    <>
+      <div className="flex justify-end mt-4 mr-4">
+        <ConnectButton chainStatus="icon" />
+      </div>
 
       <Space
         align="center"
-        className="flex mt-10 justify-center"
-        direction="horizontal"
+        direction="vertical"
+        className="flex justify-center ml-5 mr-5"
       >
-        {account && confirmed && (
-          <Card>
-            <WatchSwapEvent
-              wallet={account.address}
-              pairs={pairs!}
-              callback={execute}
-            />
-          </Card>
-        )}
-
-        {account && confirmed && (
-          <Card
-            className="ml-8"
-            style={{
-              backgroundColor: "#f0f0f0", // 设置背景颜色为浅灰色
-            }}
-          >
-            <Card title="Events Catched">
-              <ShowEvent pairs={pairs!} />
-            </Card>
-
-            <Card className="mt-8" title="Aribtrage Transaction Hash">
-              <a target="_blank" href={baseUrl + tx}>
-                {tx}
-              </a>
-            </Card>
-          </Card>
-        )}
+        <Card className="mb-10">
+          <Steps
+            className="mr-16"
+            direction="horizontal"
+            size="small"
+            current={currentStep}
+            items={[
+              {
+                title: "Generate Account",
+                icon: <UserOutlined />,
+              },
+              {
+                title: "Select Router",
+                icon: <BranchesOutlined />,
+              },
+              {
+                title: "Watching Events",
+                icon: <LoadingOutlined />,
+              },
+            ]}
+          />
+        </Card>
+        <Card className="bg-gray-200 ml-10 mr-10">
+          <Tabs type="card" defaultActiveKey="1" items={items} />
+        </Card>
       </Space>
     </>
   );
