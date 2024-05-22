@@ -122,7 +122,7 @@ export default function Page() {
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Account Management",
+      label: "Account",
       children: (
         <Card>
           {!account && (
@@ -286,7 +286,12 @@ export default function Page() {
           />
         </Card>
         <Card className="bg-gray-200 ml-10 mr-10">
-          <Tabs type="card" defaultActiveKey="1" items={items} />
+          <Tabs
+            tabBarGutter={10}
+            type="card"
+            defaultActiveKey="1"
+            items={items}
+          />
         </Card>
       </Space>
     </>
