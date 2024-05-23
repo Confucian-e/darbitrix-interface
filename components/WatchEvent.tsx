@@ -37,13 +37,15 @@ function getFactoryName(factory: Address) {
 export default function WatchEvent({
   pair,
   enabled,
-  setCount,
   callback,
+  setCounts,
+  countsIndex,
 }: {
   pair: PairContract;
   enabled: boolean;
-  setCount: React.Dispatch<React.SetStateAction<number>>;
   callback: () => Promise<void>;
+  setCounts: React.Dispatch<React.SetStateAction<number[]>>;
+  countsIndex: number;
 }) {
   const [events, setEvents] = useState<LogInfo[]>();
   const [name, setName] = useState<string>("");
@@ -56,8 +58,13 @@ export default function WatchEvent({
       const results = parseLogs(logs);
       setEvents(results);
 
-      setCount((count) => count + 1);
       await callback();
+
+      setCounts((prevCounts) => {
+        const newCounts = [...prevCounts];
+        newCounts[countsIndex]++;
+        return newCounts;
+      });
     },
     enabled,
   });

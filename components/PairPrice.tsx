@@ -74,7 +74,7 @@ export default function PairPrice({
         }
       >
         <Space align="center" direction="vertical">
-          <h2>Pair Contract:</h2>
+          <h2>Pair Contract</h2>
           <h2>{pair.contract}</h2>
 
           {isSuccess && (
