@@ -2,21 +2,17 @@
 
 import { ArbitrageContract, PairContract } from "@/classes";
 import {
-  Balance,
-  GenerateAccount,
+  AccountManage,
+  AribtrageTransaction,
+  EventsCatched,
   PairPrice,
-  SelectBox,
-  SendGas,
-  SignTypeData,
-  WatchEvent,
+  SelectRouter,
 } from "@/components";
-import { phalconUrl } from "@/constants";
 import {
   Arbitrage as Arbitrage_Address,
   PancakeSwapRouter,
   SushiSwapRouter,
 } from "@/constants/addressBook";
-import { DexFactoryOptions, TokenOptions } from "@/constants/options";
 import {
   encodeCallSwapExactFor,
   encodeCallSwapForExact,
@@ -30,7 +26,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Button, Card, Empty, Space, Steps, Tabs, TabsProps } from "antd";
+import { Card, Space, Steps, Tabs, TabsProps } from "antd";
 import { useEffect, useState } from "react";
 import {
   maxUint256,
@@ -47,12 +43,10 @@ export default function Page() {
   const [selectedTokens, setSelectedTokens] = useState<Address[]>();
   const [pairs, setPairs] = useState<PairContract[]>();
   const [confirmed, setConfirmed] = useState<boolean>(false);
-  const [transaction, setTransaction] = useState<Hex>();
+  const [transactions, setTransactions] = useState<Hex[]>();
   const [currentStep, setCurrentStep] = useState<number>(-1);
   const [enabled, setEnabled] = useState<boolean>(false);
-
-  const [pair1Count, setPair1Count] = useState<number>(0);
-  const [pair2Count, setPair2Count] = useState<number>(0);
+  const [counts, setCounts] = useState<number[]>([]);
 
   const handleConfirm = async () => {
     if (!account || !selectedDexs || !selectedTokens) return;
@@ -60,7 +54,7 @@ export default function Page() {
     const pairs = await findPairs(
       selectedDexs,
       selectedTokens[0],
-      selectedTokens[1]
+      selectedTokens[1],
     );
     const [PairA, PairB] = await getPairs(account, pairs, selectedTokens);
 
@@ -113,10 +107,10 @@ export default function Page() {
     const tx = await arbitrage.makeFlashLoan(
       [PairA.token0, PairA.token1],
       [swapAmount, swapAmount],
-      data
+      data,
     );
 
-    setTransaction(tx);
+    setTransactions(transactions ? [...transactions, tx] : [tx]);
   }
 
   const items: TabsProps["items"] = [
@@ -125,25 +119,7 @@ export default function Page() {
       label: "Account",
       children: (
         <Card>
-          {!account && (
-            <div className="flex justify-center">
-              <GenerateAccount setAccount={setAccount} />
-            </div>
-          )}
-          {account && (
-            <>
-              <h4 className="flex justify-center">
-                Send Gas to Account Address:
-              </h4>
-              <h4 className="flex justify-center">{account.address}</h4>
-              <div className="flex justify-center">
-                <Balance account={account.address} />
-              </div>
-              <div className="flex justify-center">
-                <SendGas receiver={account.address} />
-              </div>
-            </>
-          )}
+          <AccountManage account={account} setAccount={setAccount} />
         </Card>
       ),
     },
@@ -152,31 +128,12 @@ export default function Page() {
       label: "Select",
       children: (
         <Card>
-          <Space
-            align="center"
-            direction="vertical"
-            className="flex justify-center"
-          >
-            <Space align="center" size={28}>
-              <SelectBox
-                options={DexFactoryOptions}
-                setSelected={setSelectedDexs}
-                placeHolder="Select DEXs"
-              />
-              <SelectBox
-                options={TokenOptions}
-                setSelected={setSelectedTokens}
-                placeHolder="Select Tokens"
-              />
-            </Space>
-            <Button
-              className="mt-8"
-              onClick={handleConfirm}
-              disabled={confirmed}
-            >
-              confirm
-            </Button>
-          </Space>
+          <SelectRouter
+            setSelectedDexs={setSelectedDexs}
+            setSelectedTokens={setSelectedTokens}
+            disabled={confirmed}
+            onClick={handleConfirm}
+          />
         </Card>
       ),
       disabled: account ? false : true,
@@ -188,8 +145,9 @@ export default function Page() {
         <Card className="flex justify-center bg-sky-300">
           {pairs && (
             <Space align="center" direction="vertical">
-              <PairPrice pair={pairs[0]} count={pair1Count} />
-              <PairPrice pair={pairs[1]} count={pair2Count} />
+              {pairs.map((pair, index) => (
+                <PairPrice key={index} pair={pair} count={counts[index]} />
+              ))}
             </Space>
           )}
         </Card>
@@ -201,29 +159,13 @@ export default function Page() {
       label: "Events Catched",
       children: (
         <Card className="flex justify-center bg-sky-300">
-          {pairs && (
-            <Space align="center" direction="vertical">
-              <Card>
-                <Space align="center" direction="vertical">
-                  <h2>Sign Typed Data to Switch</h2>
-                  <SignTypeData enabled={enabled} setEnabled={setEnabled} />
-                </Space>
-              </Card>
-
-              <WatchEvent
-                pair={pairs[0]}
-                enabled={enabled}
-                setCount={setPair1Count}
-                callback={execute}
-              />
-              <WatchEvent
-                pair={pairs[1]}
-                enabled={enabled}
-                setCount={setPair2Count}
-                callback={execute}
-              />
-            </Space>
-          )}
+          <EventsCatched
+            pairs={pairs}
+            enabled={enabled}
+            setEnabled={setEnabled}
+            setCounts={setCounts}
+            callback={execute}
+          />
         </Card>
       ),
       disabled: confirmed ? false : true,
@@ -233,14 +175,7 @@ export default function Page() {
       label: "Aribtrage Transaction",
       children: (
         <Card>
-          {!transaction && <Empty />}
-          <a
-            className="flex justify-center"
-            target="_blank"
-            href={phalconUrl + transaction}
-          >
-            {transaction}
-          </a>
+          <AribtrageTransaction transactions={transactions} />
         </Card>
       ),
     },
