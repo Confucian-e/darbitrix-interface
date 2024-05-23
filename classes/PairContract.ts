@@ -18,7 +18,7 @@ export class PairContract extends BaseContract {
     contract: Address,
     signer: Account,
     tokenA: Address,
-    tokenB: Address
+    tokenB: Address,
   ) {
     super(contract, signer);
     this.token0 = tokenA < tokenB ? tokenA : tokenB;

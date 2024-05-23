@@ -46,7 +46,7 @@ await initPool();
 function encodeUserData(amountsIn: bigint[]): Hex {
   const encodeData = encodeAbiParameters(
     [{ type: "uint256" }, { type: "uint256[]" }],
-    [0n, amountsIn]
+    [0n, amountsIn],
   );
 
   return encodeData;

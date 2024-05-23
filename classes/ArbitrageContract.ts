@@ -25,7 +25,7 @@ export class ArbitrageContract extends BaseContract {
   async makeFlashLoan(
     tokens: Address[],
     amounts: bigint[],
-    data: Hex
+    data: Hex,
   ): Promise<Hash> {
     return await writeContract(config, {
       address: this.contract,
