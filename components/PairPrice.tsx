@@ -1,24 +1,13 @@
 "use client";
 
 import { PairContract } from "@/classes";
-import { PancakeSwapFactory, SushiSwapFactory } from "@/constants";
 import { quoteRelativePrice } from "@/core/Strategy";
+import { getFactoryInfo } from "@/utils";
 import { Card, Space } from "antd";
-import { useEffect, useState } from "react";
-import { Address, erc20Abi } from "viem";
-import { useReadContracts } from "wagmi";
 import Image from "next/image";
-
-function getFactoryName(factory: Address) {
-  switch (factory) {
-    case PancakeSwapFactory:
-      return "PancakeSwap";
-    case SushiSwapFactory:
-      return "SushiSwap";
-    default:
-      return "Unknown";
-  }
-}
+import { useEffect, useState } from "react";
+import { erc20Abi } from "viem";
+import { useReadContracts } from "wagmi";
 
 export default function PairPrice({
   pair,
@@ -58,7 +47,7 @@ export default function PairPrice({
   useEffect(() => {
     (async () => {
       const factory = await pair.getFactory();
-      const name = getFactoryName(factory);
+      const { name } = getFactoryInfo(factory);
       setName(name);
     })();
   }, [pair]);
