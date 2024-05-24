@@ -1,6 +1,6 @@
 import { Address } from "viem";
 
-const Arbitrage: Address = "0x3450F6837ad2015A4067aa5900B3e0d36aD49bCC";
+const Arbitrage: Address = "0xa86cD349302816022e216DC7C19B0c9C76a7C6Ae";
 
 const Vault: Address = "0xBA12222222228d8Ba445958a75a0704d566BF2C8";
 
@@ -15,15 +15,15 @@ const Routers = {
 };
 
 const Tokens = {
-  Amazing: "0x5E0543f61F94B40c9A5265b5B3a7B35aa8Dc6B49",
-  Business: "0x81b58Ae322E933f8238505538A73FE81Ad4f2B1E",
+  TokenA: "0x88762F15D0150aC231AF265737106E0B9e28E584",
+  TokenB: "0xb6B9CB46d9821B507e4F9705aD0d010dC8BF0447",
 };
 
 const PancakeSwapFactory = Factories.PancakeSwap as Address;
 const SushiSwapFactory = Factories.SushiSwap as Address;
 
-const AmazingToken = Tokens.Amazing as Address;
-const BusinessToken = Tokens.Business as Address;
+const TokenA = Tokens.TokenA as Address;
+const TokenB = Tokens.TokenB as Address;
 
 const PancakeSwapRouter = Routers.PancakeSwap as Address;
 const SushiSwapRouter = Routers.SushiSwap as Address;
@@ -31,10 +31,10 @@ const SushiSwapRouter = Routers.SushiSwap as Address;
 export {
   Arbitrage,
   PancakeSwapFactory,
-  SushiSwapFactory,
-  AmazingToken,
-  BusinessToken,
   PancakeSwapRouter,
+  SushiSwapFactory,
   SushiSwapRouter,
+  TokenA,
+  TokenB,
   Vault,
 };
