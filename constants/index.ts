@@ -1,11 +1,11 @@
 export {
-  AmazingToken,
   Arbitrage,
-  BusinessToken,
   PancakeSwapFactory,
   PancakeSwapRouter,
   SushiSwapFactory,
   SushiSwapRouter,
+  TokenA,
+  TokenB,
   Vault,
 } from "./addressBook";
 
