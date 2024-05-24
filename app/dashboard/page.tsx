@@ -17,10 +17,11 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Card, Space, Steps, Tabs, TabsProps } from "antd";
+import { Button, Card, Space, Steps, Tabs, TabsProps } from "antd";
 import { useEffect, useState } from "react";
 import { parseEther, type Account, type Address, type Hex } from "viem";
 import "./style.css";
+import Link from "next/link";
 
 export default function Page() {
   const [account, setAccount] = useState<Account>();
@@ -150,7 +151,7 @@ export default function Page() {
       <Space
         align="center"
         direction="vertical"
-        className="flex justify-center ml-5 mr-5"
+        className="flex justify-center mt-10 ml-5 mr-5"
       >
         <Card className="mb-10">
           <Steps
