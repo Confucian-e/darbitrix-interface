@@ -8,18 +8,9 @@ import {
   PairPrice,
   SelectRouter,
 } from "@/components";
-import {
-  Arbitrage as Arbitrage_Address,
-  PancakeSwapRouter,
-  SushiSwapRouter,
-} from "@/constants/addressBook";
-import {
-  encodeCallSwapExactFor,
-  encodeCallSwapForExact,
-  encodeMakeFlashLoanData,
-} from "@/core/Executor/encode";
+import { Arbitrage } from "@/constants/addressBook";
+import { calculateProfit } from "@/core/Executor/data";
 import { findPairs, getPairs } from "@/core/Searcher";
-import { SwapExactForParam, SwapForExactParam } from "@/types";
 import {
   BranchesOutlined,
   LoadingOutlined,
@@ -28,13 +19,7 @@ import {
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Card, Space, Steps, Tabs, TabsProps } from "antd";
 import { useEffect, useState } from "react";
-import {
-  maxUint256,
-  parseEther,
-  type Account,
-  type Address,
-  type Hex,
-} from "viem";
+import { parseEther, type Account, type Address, type Hex } from "viem";
 import "./style.css";
 
 export default function Page() {
@@ -60,48 +45,17 @@ export default function Page() {
 
     setPairs([PairA, PairB]);
     setConfirmed(true);
-
-    console.log("Pairs: ", pairs);
   };
 
   async function execute() {
     if (!pairs || !account) return;
     const [PairA, PairB] = pairs;
-    const [token0, token1] = [PairA.token0, PairA.token1];
 
-    console.log("Pairs: ", pairs);
-
-    const arbitrage = new ArbitrageContract(Arbitrage_Address, account);
+    const arbitrage = new ArbitrageContract(Arbitrage, account);
 
     const swapAmount = parseEther("100");
-    const path1 = [token0, token1];
-    const path2 = [token1, token0];
-    const to = arbitrage.contract;
-    // const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 10);
-    const deadline = 1730000000n; // 2024-10-27
-
-    // encode swap for exact
-    const param1: SwapForExactParam = {
-      amountInMax: maxUint256,
-      amountOut: swapAmount,
-      path: path1,
-      to,
-      deadline,
-    };
-
-    // encode swap exact for
-    const param2: SwapExactForParam = {
-      amountIn: swapAmount,
-      amountOutMin: 0n,
-      path: path2,
-      to,
-      deadline,
-    };
-
-    const call1 = encodeCallSwapForExact(SushiSwapRouter, param1);
-    const call2 = encodeCallSwapExactFor(PancakeSwapRouter, param2);
-
-    const data = encodeMakeFlashLoanData([call1, call2]);
+    const data = await calculateProfit(PairA, PairB, swapAmount);
+    if (data == undefined) throw new Error("Invalid flashLoan data");
 
     // execute arbitrage
     const tx = await arbitrage.makeFlashLoan(
