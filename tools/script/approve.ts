@@ -1,16 +1,39 @@
-import { IArbitrage } from "../../abi";
+import { erc20Abi, maxUint256, type Address } from "viem";
+import { walletClient } from "../config/client";
+import { TokenA, TokenB, Vault_Address } from "./Balancer/info";
 import {
   Arbitrage,
   PancakeSwapRouter,
   SushiSwapRouter,
 } from "../../constants/addressBook";
-import { walletClient } from "../config/client";
+import { IArbitrage } from "../../abi";
 
-async function approve() {
-  const tokens = [
-    "0x5E0543f61F94B40c9A5265b5B3a7B35aa8Dc6B49",
-    "0x81b58Ae322E933f8238505538A73FE81Ad4f2B1E",
-  ];
+async function approve(token: Address, spender: Address) {
+  const tx = await walletClient.writeContract({
+    address: token,
+    abi: erc20Abi,
+    functionName: "approve",
+    args: [spender, maxUint256],
+  });
+
+  console.log(`${token} approve ${spender}, tx: ${tx}`);
+}
+
+// async function main() {
+//   await approve(TokenA, Vault_Address);
+//   await approve(TokenB, Vault_Address);
+
+//   await approve(TokenA, PancakeSwapRouter);
+//   await approve(TokenB, PancakeSwapRouter);
+
+//   await approve(TokenA, SushiSwapRouter);
+//   await approve(TokenB, SushiSwapRouter);
+// }
+
+// await main();
+
+async function approveArbitrage() {
+  const tokens = [TokenA, TokenB];
 
   const spenders = [SushiSwapRouter, PancakeSwapRouter];
 
@@ -24,4 +47,4 @@ async function approve() {
   console.log(`tx: ${tx}`);
 }
 
-await approve();
+await approveArbitrage();
