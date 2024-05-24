@@ -1,5 +1,6 @@
 import { Option } from "@/types";
 import { Select } from "antd";
+import { Dispatch, SetStateAction } from "react";
 import { Address } from "viem";
 
 /**
@@ -15,7 +16,7 @@ export default function SelectBox({
   placeHolder,
 }: {
   options: Option[];
-  setSelected: React.Dispatch<React.SetStateAction<Address[] | undefined>>;
+  setSelected: Dispatch<SetStateAction<Address[] | undefined>>;
   placeHolder: string;
 }) {
   /**

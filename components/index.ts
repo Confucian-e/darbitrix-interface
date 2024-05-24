@@ -1,27 +1,19 @@
-import Balance from "./Balance";
+import AccountManage from "./AccountManage";
+import AribtrageTransaction from "./AribtrageTransaction";
 import Config from "./Config";
-import GenerateAccount from "./GenerateAccount";
-import SelectBox from "./SelectBox";
-import SendGas from "./SendGas";
-import WatchSwapEvent from "./WatchSwapEvent";
-import ShowEvent from "./ShowEvent";
-import VaultTable from "./VaultTable";
-import TokenBalance from "./TokenBalance";
-import SignTypeData from "./SignTypeData";
+import EventsCatched from "./EventsCatched";
 import PairPrice from "./PairPrice";
-import WatchEvent from "./WatchEvent";
+import SelectRouter from "./SelectRouter";
+import TokenBalance from "./TokenBalance";
+import VaultTable from "./VaultTable";
 
 export {
-  Balance,
+  AccountManage,
+  AribtrageTransaction,
   Config,
-  GenerateAccount,
-  SelectBox,
-  SendGas,
-  WatchSwapEvent,
-  ShowEvent,
-  VaultTable,
-  TokenBalance,
-  SignTypeData,
+  EventsCatched,
   PairPrice,
-  WatchEvent,
+  SelectRouter,
+  TokenBalance,
+  VaultTable,
 };

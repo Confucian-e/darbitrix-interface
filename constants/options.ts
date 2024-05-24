@@ -1,8 +1,8 @@
 import {
-  AmazingToken,
-  BusinessToken,
   PancakeSwapFactory,
   SushiSwapFactory,
+  TokenA,
+  TokenB,
 } from "@/constants/addressBook";
 import { Option } from "@/types";
 
@@ -12,6 +12,6 @@ export const DexFactoryOptions: Option[] = [
 ];
 
 export const TokenOptions: Option[] = [
-  { value: AmazingToken, label: "Amazing" },
-  { value: BusinessToken, label: "Business" },
+  { value: TokenA, label: "TokenA" },
+  { value: TokenB, label: "TokenB" },
 ];

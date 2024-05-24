@@ -1,12 +1,11 @@
 import { parseUnits } from "viem";
 import { IUniswapV2Router } from "../../abi";
 import {
-  AmazingToken,
-  BusinessToken,
   PancakeSwapRouter,
   SushiSwapRouter,
 } from "../../constants/addressBook";
 import { walletClient } from "../config/client";
+import { TokenA, TokenB } from "./Balancer/info";
 
 async function addLiquidities() {
   const receiver = "0x000000269073b3B12AF597028aCc00668B67aD6E";
@@ -16,38 +15,20 @@ async function addLiquidities() {
   const amount_2m = parseUnits("2", 24);
   const amount_4m = parseUnits("4", 24);
 
-  const tx_1 = await walletClient.writeContract({
-    abi: IUniswapV2Router,
-    address: PancakeSwapRouter,
-    functionName: "addLiquidity",
-    args: [
-      AmazingToken,
-      BusinessToken,
-      amount_1m,
-      amount_2m,
-      0n,
-      0n,
-      receiver,
-      deadline,
-    ],
-  });
+  // const tx_1 = await walletClient.writeContract({
+  //   abi: IUniswapV2Router,
+  //   address: PancakeSwapRouter,
+  //   functionName: "addLiquidity",
+  //   args: [TokenA, TokenB, amount_1m, amount_2m, 0n, 0n, receiver, deadline],
+  // });
 
-  console.log("PancakeSwap Adding Liquidity: ", tx_1);
+  // console.log("PancakeSwap Adding Liquidity: ", tx_1);
 
   const tx_2 = await walletClient.writeContract({
     abi: IUniswapV2Router,
     address: SushiSwapRouter,
     functionName: "addLiquidity",
-    args: [
-      AmazingToken,
-      BusinessToken,
-      amount_1m,
-      amount_4m,
-      0n,
-      0n,
-      receiver,
-      deadline,
-    ],
+    args: [TokenA, TokenB, amount_1m, amount_4m, 0n, 0n, receiver, deadline],
   });
 
   console.log("SushiSwap Adding Liquidity: ", tx_2);

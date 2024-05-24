@@ -52,7 +52,7 @@ export default function SignTypeData({
       },
       {
         onSuccess: () => setEnabled(checked),
-      }
+      },
     );
   };
 

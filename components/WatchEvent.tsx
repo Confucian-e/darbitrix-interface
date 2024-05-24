@@ -2,11 +2,11 @@
 
 import { IUniswapV2Pair } from "@/abi";
 import { PairContract } from "@/classes";
-import { PancakeSwapFactory, SushiSwapFactory } from "@/constants";
+import { getFactoryInfo } from "@/utils";
 import { Card, Empty, Space } from "antd";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Address, Hash, Log } from "viem";
+import { Hash, Log } from "viem";
 import { useWatchContractEvent } from "wagmi";
 
 interface LogInfo {
@@ -23,27 +23,18 @@ function parseLogs(logs: Log[]) {
   });
 }
 
-function getFactoryName(factory: Address) {
-  switch (factory) {
-    case PancakeSwapFactory:
-      return "PancakeSwap";
-    case SushiSwapFactory:
-      return "SushiSwap";
-    default:
-      return "Unknown";
-  }
-}
-
 export default function WatchEvent({
   pair,
   enabled,
-  setCount,
   callback,
+  setCounts,
+  countsIndex,
 }: {
   pair: PairContract;
   enabled: boolean;
-  setCount: React.Dispatch<React.SetStateAction<number>>;
   callback: () => Promise<void>;
+  setCounts: React.Dispatch<React.SetStateAction<number[]>>;
+  countsIndex: number;
 }) {
   const [events, setEvents] = useState<LogInfo[]>();
   const [name, setName] = useState<string>("");
@@ -56,8 +47,13 @@ export default function WatchEvent({
       const results = parseLogs(logs);
       setEvents(results);
 
-      setCount((count) => count + 1);
       await callback();
+
+      setCounts((prevCounts) => {
+        const newCounts = [...prevCounts];
+        newCounts[countsIndex]++;
+        return newCounts;
+      });
     },
     enabled,
   });
@@ -65,7 +61,7 @@ export default function WatchEvent({
   useEffect(() => {
     (async () => {
       const factory = await pair.getFactory();
-      const name = getFactoryName(factory);
+      const { name } = getFactoryInfo(factory);
       setName(name);
     })();
   }, [pair]);

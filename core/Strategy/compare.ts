@@ -5,7 +5,7 @@ const fee = 0.003;
 
 export async function quoteRelativePrice(
   pair: PairContract,
-  baseToken: Address
+  baseToken: Address,
 ) {
   const [reserve0, reserve1] = await pair.getReserves();
 

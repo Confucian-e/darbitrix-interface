@@ -30,7 +30,7 @@ export function encodeMakeFlashLoanData(calls: Call[]): Hex {
  */
 export function encodeCallSwapExactFor(
   target: Address,
-  param: SwapExactForParam
+  param: SwapExactForParam,
 ): Call {
   const swapData = encodeFunctionData({
     abi: IUniswapV2Router,
@@ -55,7 +55,7 @@ export function encodeCallSwapExactFor(
  */
 export function encodeCallSwapForExact(
   target: Address,
-  param: SwapForExactParam
+  param: SwapForExactParam,
 ): Call {
   const swapData = encodeFunctionData({
     abi: IUniswapV2Router,

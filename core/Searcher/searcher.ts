@@ -14,7 +14,7 @@ import { multicall } from "wagmi/actions";
 export async function findPairs(
   factories: Address[],
   tokenA: Address,
-  tokenB: Address
+  tokenB: Address,
 ): Promise<Address[]> {
   const contracts = factories.map((factory) => ({
     address: factory,
@@ -43,7 +43,7 @@ export async function findPairs(
 export async function getPairs(
   account: Account,
   pairs: Address[],
-  tokens: Address[]
+  tokens: Address[],
 ): Promise<PairContract[]> {
   if (pairs.length !== 2) throw new Error("Invalid Length of pairs");
   if (tokens.length !== 2) throw new Error("Invalid Length of tokens");

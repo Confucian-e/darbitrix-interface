@@ -18,11 +18,19 @@ export class PairContract extends BaseContract {
     contract: Address,
     signer: Account,
     tokenA: Address,
-    tokenB: Address
+    tokenB: Address,
   ) {
     super(contract, signer);
     this.token0 = tokenA < tokenB ? tokenA : tokenB;
     this.token1 = tokenA < tokenB ? tokenB : tokenA;
+  }
+
+  /**
+   * Retrieves an array of tokens associated with the pair contract.
+   * @returns {Array<Token>} An array containing the token0 and token1.
+   */
+  getTokens(): [Address, Address] {
+    return [this.token0, this.token1];
   }
 
   /**

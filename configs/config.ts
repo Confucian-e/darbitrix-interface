@@ -36,7 +36,7 @@ const connectors = connectorsForWallets(
   {
     appName: "Darbitrix",
     projectId: PROJECT_ID,
-  }
+  },
 );
 
 /**
