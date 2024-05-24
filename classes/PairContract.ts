@@ -26,6 +26,14 @@ export class PairContract extends BaseContract {
   }
 
   /**
+   * Retrieves an array of tokens associated with the pair contract.
+   * @returns {Array<Token>} An array containing the token0 and token1.
+   */
+  getTokens(): [Address, Address] {
+    return [this.token0, this.token1];
+  }
+
+  /**
    * Retrieves the reserves of the Uniswap V2 pair contract.
    * @returns A promise that resolves to an array of two bigints representing the reserves.
    */
