@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, Modal, Space } from "antd";
+import { Button, Card, Input, Modal, Space } from "antd";
 import { useState } from "react";
 import type { Account, Hex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
@@ -52,13 +52,9 @@ export default function GenerateAccount({
         onOk={handleModal}
         onCancel={handleModal}
       >
-        {/* <Space align="center" direction="vertical">
-          <p>Copy the private key to import account</p>
-          <pre>{privateKey}</pre>
-        </Space> */}
         <Card>
           <p>Copy the private key to import account</p>
-          <pre>{privateKey}</pre>
+          <Input.TextArea value={privateKey} readOnly />
         </Card>
       </Modal>
     </Space>
